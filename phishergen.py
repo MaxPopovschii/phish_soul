@@ -8,6 +8,8 @@ os.makedirs(TEMPLATE_DIR, exist_ok=True)
 os.makedirs(LANDING_DIR, exist_ok=True)
 
 class PhishSoulCLI:
+    LANDING_NAME_PROMPT = "Landing name: "
+
     def __init__(self):
         self.emailgen = EmailGenerator()
         self.landinggen = LandingPageGenerator()
@@ -62,15 +64,15 @@ class PhishSoulCLI:
         print("3. Create Facebook clone landing page")
         choice = input("Choose an option: ")
         if choice == '1':
-            name = input("Landing name: ")
+            name = input(self.LANDING_NAME_PROMPT)
             title = input("Title: ")
             message = input("Message: ")
             self.landinggen.generate_landing(name, title, message)
         elif choice == '2':
-            name = input("Landing name: ")
+            name = input(self.LANDING_NAME_PROMPT)
             self.landinggen.generate_instagram_clone(name)
         elif choice == '3':
-            name = input("Landing name: ")
+            name = input(self.LANDING_NAME_PROMPT)
             self.landinggen.generate_facebook_clone(name)
         else:
             print("Invalid option.")
