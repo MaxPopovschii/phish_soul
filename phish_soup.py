@@ -1,6 +1,9 @@
 import os
 from emailgenerator import EmailGenerator
 from landingpagegenerator import LandingPageGenerator
+from dotenv import load_dotenv
+
+load_dotenv()
 
 TEMPLATE_DIR = 'templates'
 LANDING_DIR = 'landings'
@@ -9,6 +12,8 @@ os.makedirs(LANDING_DIR, exist_ok=True)
 
 class PhishSoulCLI:
     LANDING_NAME_PROMPT = "Landing name: "
+    SUBJECT_PROMPT = "Subject: "
+    BODY_PROMPT = "Body: "
 
     def __init__(self):
         self.emailgen = EmailGenerator()
@@ -51,10 +56,9 @@ class PhishSoulCLI:
                 print("Invalid option. Try again.")
 
     def manage_email_templates(self):
-        print("\n--- Manage Email Templates ---")
         name = input("Template name: ")
-        subject = input("Subject: ")
-        body = input("Body: ")
+        subject = input(self.SUBJECT_PROMPT)
+        body = input(self.BODY_PROMPT)
         self.emailgen.generate_email_template(name, subject, body)
 
     def manage_landing_pages(self):
@@ -79,18 +83,22 @@ class PhishSoulCLI:
 
     def send_email_cli(self):
         print("\n--- Send Email ---")
-        smtp_host = input("SMTP host (e.g. smtp.gmail.com): ")
-        smtp_port = int(input("SMTP port (e.g. 465): "))
-        sender = input("Sender: ")
-        recipient = input("Recipient: ")
-        subject = input("Subject: ")
-        body = input("Body: ")
-        use_auth = input("Use SMTP authentication? (y/n): ").lower() == 'y'
+        smtp_host = input("SMTP host (e.g. smtp.gmail.com): ").strip() or os.getenv("SMTP_HOST")
+        smtp_port_input = input("SMTP port (e.g. 587): ").strip()
+        smtp_port = int(smtp_port_input) if smtp_port_input else int(os.getenv("SMTP_PORT", "587"))
+        sender = input("Sender: ").strip() or os.getenv("SMTP_SENDER")
+        recipient = input("Recipient: ").strip() or os.getenv("SMTP_RECIPIENT")
+        subject = input(self.SUBJECT_PROMPT).strip() or os.getenv("SMTP_SUBJECT")
+        body = input(self.BODY_PROMPT).strip() or os.getenv("SMTP_BODY")
+        use_auth_input = input("Use SMTP authentication? (y/n): ").strip()
+        use_auth = (use_auth_input or os.getenv("SMTP_USE_AUTH", "n")).lower() == 'y'
         if use_auth:
-            os.environ['SMTP_USER'] = input("SMTP username: ")
-            os.environ['SMTP_PASS'] = input("SMTP password: ")
-        use_ssl = input("Use SSL? (y/n): ").lower() == 'y'
-        use_tls = input("Use TLS? (y/n): ").lower() == 'y'
+            os.environ['SMTP_USER'] = input("SMTP username: ").strip() or os.getenv("SMTP_USER")
+            os.environ['SMTP_PASS'] = input("SMTP password: ").strip() or os.getenv("SMTP_PASS")
+        use_ssl_input = input("Use SSL? (y/n): ").strip()
+        use_ssl = (use_ssl_input or os.getenv("SMTP_SSL", "n")).lower() == 'y'
+        use_tls_input = input("Use TLS? (y/n): ").strip()
+        use_tls = (use_tls_input or os.getenv("SMTP_TLS", "n")).lower() == 'y'
         os.environ['SMTP_SSL'] = 'true' if use_ssl else 'false'
         os.environ['SMTP_TLS'] = 'true' if use_tls else 'false'
         try:
