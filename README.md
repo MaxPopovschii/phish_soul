@@ -1,4 +1,4 @@
-# PHISH_SOUL 🚨
+# PHISH_SOUP 🚨
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)
 ![CLI Tool](https://img.shields.io/badge/cli-interactive-brightgreen)
